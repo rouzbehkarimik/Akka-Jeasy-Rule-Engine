@@ -26,8 +26,6 @@ public class Main {
 
         Facts facts= new Facts();
         facts.put("age",17);
-        facts.put("ActorRef",coolGuy);
-        facts.put("ParentActorRef",coolGuy);
 
 
         try {
