@@ -12,9 +12,6 @@ import org.jeasy.rules.api.Facts;
  * on 11/27/2017.
  *
  * ==============================================================
- * first create your rules by extending BaseRule class, don't forget to implement @Condition method.
- * then create your akka-jeasy message extending BaseFactsMessage and don't forget to implement Serializable.
- * Finally you should add Relation between Message Types and Rules in MessageRuleMapper Enum
  */
 public class Main {
     public static void main(String[] args) {
