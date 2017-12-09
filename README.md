@@ -21,3 +21,7 @@ An akka-jeasy integrated rule engine library which its goal is to implement rule
             }
 ```
 now run the code, Tada! you have a non blocking rule engine.
+also there is a full working example at example package.
+* #### `important notice: a sequence of rule checkings end where the last called rule class return a null as return value of takeRuleAction`  
+
+
