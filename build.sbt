@@ -16,8 +16,10 @@ val jeasyVersion = "3.0.0"
     "org.jeasy" % "easy-rules-core" % jeasyVersion,
     "org.jeasy" % "easy-rules" % jeasyVersion,
     "org.aspectj" % "aspectjweaver" % "1.8.10",
-    "ch.qos.logback" % "logback-classic" % "1.2.3"
-
+    "com.internetitem" % "logback-elasticsearch-appender" % "1.6",
+    "ch.qos.logback" % "logback-core" % "1.2.3",
+    "ch.qos.logback" % "logback-classic" % "1.2.3",
+    "org.slf4j" % "slf4j-api" % "1.7.25"
 
 
 )
@@ -27,3 +29,6 @@ val jeasyVersion = "3.0.0"
 aspectjSettings
 javaOptions <++= AspectjKeys.weaverOptions in Aspectj
 fork in run := true
+
+
+mainClass in (Compile, run) := Some("ir.techstorm.ruleengine.example.Main")

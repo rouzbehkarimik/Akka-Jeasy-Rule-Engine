@@ -1,4 +1,4 @@
-package ir.techstorm.ruleengine.example.rules;
+package ir.techstorm.ruleengine.framework;
 
 import akka.actor.ActorRef;
 import ir.techstorm.ruleengine.example.factmessage.AccountOpeningParentStatusFactsMessage;
@@ -16,28 +16,24 @@ import org.slf4j.LoggerFactory;
  * on 11/27/2017.
  */
 @Rule(name = "account opening age rule", description = "if under 18 apply parent rules")
-public class AccountOpeningAgeRule extends BaseRule {
+public class NoRule extends BaseRule {
 
 
     final private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public AccountOpeningAgeRule(ActorRef actorToCall) {
+    public NoRule(ActorRef actorToCall) {
         super(actorToCall);
     }
 
     @Override
     public BaseFactsMessage takeRuleAction() {
-        log.error("{\"action\":\"your parent are dead batman, they are dead!\"}");
-        Facts facts = new Facts();
-        facts.put("areParentDead", true);
-
-        return new AccountOpeningParentStatusFactsMessage(facts);
+        return null;
     }
 
 
     @Condition
-    public boolean isUnder18(@Fact("age") int age) {
-        return age < 18;
+    public boolean isLastStep() {
+        return true;
     }
 
 

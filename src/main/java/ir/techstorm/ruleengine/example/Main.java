@@ -23,8 +23,6 @@ public class Main {
 
         Facts facts= new Facts();
         facts.put("age",17);
-
-
         try {
             coolGuy.tell(new AccountOpeningAgeFactsMessage( facts),ActorRef.noSender());
         } catch (Exception e) {

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--suppress ALL -->
 <configuration debug="true" scan="true" scanPeriod="1 minute">
 
-    <property name="APPLICATION_LEVEL" value="INFO"/>
-    <property name="STACK_TRACE_LEVEL_COUNT" value="15"/>
-    <!--<contextListener package="ir.techstorm.ruleengine"/>-->
-    <property name="PATTERN" scope="context" value="%-15([%level]) [Date]:%date{yyyy-MM-dd'T'HH:mm:ss.SSS} [thread]:%thread %logger{30}.%method@%line:\t%message%n"/>
-
+    <property name="APPLICATION_LEVEL" value="error"/>
+    <property name="STACK_TRACE_LEVEL_COUNT" value="80"/>
+    <property name="PATTERN" scope="context" value="%-7([%level])   [Date]:%date{yyyy-MM-dd'T'HH:mm:ss.SSS} [thread]:%thread %logger{30}.%method@%line:\t%message%n"/>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${PATTERN}</pattern>
@@ -15,23 +12,84 @@
 
 
 
-    <appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="CONSOLE"/>
+    <appender name="ELASTIC" class="com.internetitem.logback.elasticsearch.ElasticsearchAppender">
+        <url>http://127.0.0.1:9200/_bulk</url>
+        <index>kpi-%date{yyyy-MM-dd}</index>
+        <type>tester</type>
+        <loggerName>es-logger</loggerName> <!-- optional -->
+        <errorLoggerName>es-error-logger</errorLoggerName> <!-- optional -->
+        <connectTimeout>30000</connectTimeout> <!-- optional (in ms, default 30000) -->
+        <errorsToStderr>true</errorsToStderr> <!-- optional (default false) -->
+        <includeCallerData>false</includeCallerData> <!-- optional (default false) -->
+        <logsToStderr>true</logsToStderr> <!-- optional (default false) -->
+        <maxQueueSize>104857600</maxQueueSize> <!-- optional (default 104857600) -->
+        <maxRetries>3</maxRetries> <!-- optional (default 3) -->
+        <readTimeout>30000</readTimeout> <!-- optional (in ms, default 30000) -->
+        <sleepTime>250</sleepTime> <!-- optional (in ms, default 250) -->
+        <rawJsonMessage>true</rawJsonMessage>  <!--optional (default false) -->
+        <includeMdc>false</includeMdc> <!-- optional (default false) -->
+        <maxMessageSize>1024</maxMessageSize> <!-- optional (default -1 -->
+        <!-- <authentication class="com.internetitem.logback.elasticsearch.config.BasicAuthentication" /> optional -->
+        <properties>
+            <property>
+                <name>Date</name>
+                <value>%date{yyyy-MM-dd'T'HH:mm:ss.SSS}</value>
+            </property>
+            <property>
+                <name>host</name>
+                <value>${HOSTNAME}</value>
+                <allowEmpty>false</allowEmpty>
+            </property>
+            <property>
+                <name>severity</name>
+                <value>%level</value>
+            </property>
+            <property>
+                <name>thread</name>
+                <value>%thread</value>
+            </property>
+            <property>
+                <name>stacktrace</name>
+                <value>%ex</value>
+            </property>
+            <property>
+                <name>logger</name>
+                <value>%logger</value>
+            </property>
+        </properties>
+        <headers>
+            <header>
+                <name>Content-Type</name>
+                <value>application/json</value>
+            </header>
+        </headers>
     </appender>
 
-    <logger name="ir.techstorm.ruleengine.example" additivity="true">
+    <logger name="ir.*" additivity="true">
+        <level value="${APPLICATION_LEVEL}"/>
+    </logger>
+
+    <logger name="org.*" additivity="true">
         <level value="${APPLICATION_LEVEL}"/>
     </logger>
 
 
-    <logger name="org.aspectj" additivity="true">
-        <level value="INFO"/>
-    </logger>
-
-    <root>
-        <level value="${APPLICATION_LEVEL}"/>
-        <!--<appender-ref ref="CONSOLE"/>-->
-        <appender-ref ref="ASYNC_CONSOLE"/>
-        <!--<appender-ref ref="FILE"/>-->
+    <root level="error">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ELASTIC" />
     </root>
+
+    <logger name="es-error-logger" level="error" additivity="true">
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <logger name="es-logger" level="error" additivity="true">
+        <appender name="CONSOLE" >
+            <encoder>
+                <pattern>${PATTERN}</pattern> <!-- This pattern is important, otherwise it won't be the raw Elasticsearch format anyomre -->
+            </encoder>
+        </appender>
+    </logger>
+
+
 </configuration>
